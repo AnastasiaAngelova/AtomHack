@@ -1,6 +1,0 @@
-[submodule "flutter_application"]
-	path = flutter_application
-	url = https://github.com/NovokshanovE/atomhack_flutter.git
-[submodule "atomhack_nats"]
-	path = atomhack_nats
-	url = https://github.com/NovokshanovE/atomhack_nats.git
