@@ -1,0 +1,3 @@
+[submodule "flutter_application"]
+	path = flutter_application
+	url = https://github.com/NovokshanovE/atomhack_flutter.git
