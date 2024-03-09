@@ -71,7 +71,7 @@ func runHttpServer(done chan bool) {
 
 	// mux.HandleFunc("", chanHandler)
 	mux.HandleFunc("/", homePage)
-	mux.HandleFunc("/order", showOrder)
+	mux.HandleFunc("/report", showOrder)
 	signalChan := make(chan os.Signal, 1)
 	go func() {
 		log.Println("Server run on: http:localhost:4000")
