@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import '../settings/settings_view.dart';
 import 'package:dio/dio.dart';
@@ -22,214 +23,148 @@ class ReportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              // Navigate to the settings page. If the user leaves and returns
-              // to the app after it has been killed while running in the
-              // background, the navigation stack is restored.
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
-            },
-          ),
-        ],
-      ),
-      body: SafeArea(
-          child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-        child: SingleChildScrollView(
-          child: Column(children: [
-            Text('Create Report'),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
+        appBar: AppBar(
+          title:
+              Text("MARS report system", style: TextStyle(color: Colors.white)),
+          backgroundColor: Colors.deepPurple[900],
+          actions: [
+            IconButton(
+              icon: const Icon(
+                  color: Color.fromARGB(255, 255, 255, 255), Icons.settings),
+              onPressed: () {
+                // Navigate to the settings page. If the user leaves and returns
+                // to the app after it has been killed while running in the
+                // background, the navigation stack is restored.
+                Navigator.restorablePushNamed(context, SettingsView.routeName);
+              },
             ),
-            Column(
-              children: [
-                TextField(
-                    decoration: InputDecoration(
-                  labelText: 'Input name...',
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
-                      color: Color(0xFFE5E7EB),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                )),
-                TextField(
-                  autofocus: true,
-                  obscureText: false,
-                  decoration: InputDecoration(
-                    hintText: 'Input report',
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFE5E7EB),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFF6F61EF),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    errorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFFF5963),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    focusedErrorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(0xFFFF5963),
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                    contentPadding:
-                        EdgeInsetsDirectional.fromSTEB(16, 24, 16, 12),
-                  ),
-                  maxLines: 100,
-                  minLines: 6,
-                  cursorColor: Color(0xFF6F61EF),
-                )
-              ],
+            IconButton(
+              icon: const Icon(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  Icons.replay_outlined),
+              onPressed: () {
+                // Navigate to the settings page. If the user leaves and returns
+                // to the app after it has been killed while running in the
+                // background, the navigation stack is restored.
+                this.build(context);
+              },
             ),
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-            ),
-            Row(children: [
-              IconButton(
-                onPressed: () {
-                  print("pressed");
-                },
-                icon: const Icon(Icons.upload_file),
-              ),
-              IconButton(
-                onPressed: () {
-                  print("post");
-                  getHttp();
-                },
-                icon: const Icon(Icons.outbond_outlined),
-              )
-            ]),
-          ]),
+          ],
         ),
-      )),
+        body: Row(children: [Left(), Middle()]));
+  }
+}
+
+class Middle extends StatelessWidget {
+  const Middle({super.key});
+  // final List<Report> items;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.black12,
+      // child: ListView.builder(
+      //     restorationId: 'sampleItemListView',
+      //     // itemCount: 3,
+      //     itemBuilder: (BuildContext context, int index) {}),
     );
   }
 }
 
-/**
-Padding(
-  padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 12),
-  child: FFButtonWidget(
-    onPressed: () {
-      print('Button pressed ...');
-    },
-    text: 'Submit Ticket',
-    icon: Icon(
-      Icons.receipt_long,
-      size: 15,
-    ),
-    options: FFButtonOptions(
-      width: double.infinity,
-      height: 54,
-      padding: EdgeInsets.all(0),
-      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-      color: Color(0xFF6F61EF),
-      textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-            fontFamily: 'Plus Jakarta Sans',
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-      elevation: 4,
-      borderSide: BorderSide(
-        color: Colors.transparent,
-        width: 1,
+class Report extends StatelessWidget {
+  const Report({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
+class Left extends StatelessWidget {
+  const Left({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.deepPurple,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Stack(
+          children: [
+            Column(
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    print("Отправлены");
+                  },
+                  icon: Icon(
+                    color: Color.fromARGB(255, 255, 255, 255),
+                    Icons.send_rounded,
+                  ),
+                  label:
+                      Text("Отправлены", style: TextStyle(color: Colors.white)),
+                ),
+                TextButton.icon(
+                    onPressed: () {
+                      print("Ожидают отправки");
+                    },
+                    icon: Icon(
+                      Icons.timelapse,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                    label: Text("Ожидают отправки",
+                        style: TextStyle(color: Colors.white))),
+                TextButton.icon(
+                    onPressed: () {
+                      print("Edit draft");
+                    },
+                    icon: Icon(
+                      Icons.edit_document,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                    label: Text("Черновик",
+                        style: TextStyle(color: Colors.white))),
+              ],
+            ),
+            Padding(
+                padding: const EdgeInsets.symmetric(vertical: Checkbox.width)),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                    onPressed: () {
+                      print("Create report");
+                    },
+                    icon: Icon(
+                      Icons.note_add,
+                      color: Color.fromARGB(255, 255, 255, 255),
+                    ),
+                    label: Text("Create report",
+                        style: TextStyle(color: Colors.white))),
+              ],
+            ),
+          ],
+        ),
       ),
-      borderRadius: BorderRadius.circular(12),
-    ),
-  ),
-)
-// Padding(
-            //     padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-            //     child: Container(
-            //       width: double.infinity,
-            //       constraints: BoxConstraints(
-            //         maxWidth: 500,
-            //       ),
-            //       decoration: BoxDecoration(
-            //         // color: Colors.white,
-            //         borderRadius: BorderRadius.circular(12),
-            //         border: Border.all(
-            //           // color: Color(0xFFE5E7EB),
-            //           width: 2,
-            //         ),
-            //       ),
-            //       child: Padding(
-            //         padding: EdgeInsets.all(8),
-            //         child: Row(
-            //           mainAxisSize: MainAxisSize.max,
-            //           children: [
-            //             Icon(
-            //               Icons.upload_file,
-            //               color: Color(0xFF6F61EF),
-            //               size: 32,
-            //             ),
-            //             Padding(
-            //               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-            //               child: Text(
-            //                 'Upload File',
-            //                 textAlign: TextAlign.center,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     )),
-            // Padding(
-            //     padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-            //     child: Container(
-            //       width: double.infinity,
-            //       constraints: BoxConstraints(
-            //         maxWidth: 500,
-            //       ),
-            //       decoration: BoxDecoration(
-            //         // color: Colors.white,
-            //         borderRadius: BorderRadius.circular(12),
-            //         border: Border.all(
-            //           // color: Color(0xFFE5E7EB),
-            //           width: 2,
-            //         ),
-            //       ),
-            //       child: Padding(
-            //         padding: EdgeInsets.all(8),
-            //         child: Row(
-            //           mainAxisSize: MainAxisSize.max,
-            //           children: [
-            //             Icon(
-            //               Icons.airline_stops_sharp,
-            //               color: Color(0xFF6F61EF),
-            //               size: 32,
-            //             ),
-            //             Padding(
-            //               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-            //               child: Text(
-            //                 'Submit',
-            //                 textAlign: TextAlign.center,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     )),
-            // Padding(
-            //   padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-            // ),
- */
+    );
+  }
+}
+
+/*
+TextButton.icon(
+              onPressed: () {
+                print("pressed1");
+              },
+              icon: Icon(Icons.upload_file),
+              label: Text("Upload File")),
+          TextButton.icon(
+              onPressed: () {
+                print("pressed2");
+              },
+              icon: Icon(Icons.upload_file),
+              label: Text("Push report"))
+*/
