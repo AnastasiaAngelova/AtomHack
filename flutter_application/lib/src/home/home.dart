@@ -10,8 +10,12 @@ class ReportPage extends StatelessWidget {
   final dio = Dio();
 
   void getHttp() async {
-    final response = await dio.get('http://127.0.0.1:4000/order?id=id_1');
-    print(response);
+    try {
+      final response = await dio.get('http://127.0.0.1:4000/order?id=id_1');
+      print(response);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
