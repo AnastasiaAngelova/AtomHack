@@ -163,7 +163,7 @@ func (o *Report) Scan(value interface{}) error {
 
 func saveInDB(id int, json_str string) error {
 
-	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=nats_db sslmode=disable")
+	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=earth sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -172,7 +172,7 @@ func saveInDB(id int, json_str string) error {
 	// fmt.Print("\n")
 	// fmt.Print(order.to_json())
 	sqlStatement := `
-	INSERT INTO message VALUES 
+	INSERT INTO reports VALUES 
 	($1, 
 	$2, $3)`
 	// fmt.Print(cache.Orders[id])
