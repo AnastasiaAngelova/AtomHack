@@ -75,9 +75,9 @@ class MyApp extends StatelessWidget {
                   case SampleItemDetailsView.routeName:
                     return const SampleItemDetailsView();
                   case SampleItemListView.routeName:
-                  case HomaPage.routeName:
+                  case ReportPage.routeName:
                   default:
-                    return HomaPage();
+                    return ReportPage();
                 }
               },
             );

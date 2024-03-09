@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 
 import '../settings/settings_view.dart';
+import 'package:dio/dio.dart';
+// import 'dio';
 
-class HomaPage extends StatelessWidget {
+class ReportPage extends StatelessWidget {
   static const routeName = '/';
+
+  final dio = Dio();
+
+  void getHttp() async {
+    final response = await dio.get('http://127.0.0.1:4000/order?id=id_1');
+    print(response);
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -88,78 +98,21 @@ class HomaPage extends StatelessWidget {
             Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
             ),
-            Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                child: Container(
-                  width: double.infinity,
-                  constraints: BoxConstraints(
-                    maxWidth: 500,
-                  ),
-                  decoration: BoxDecoration(
-                    // color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      // color: Color(0xFFE5E7EB),
-                      width: 2,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Icon(
-                          Icons.upload_file,
-                          color: Color(0xFF6F61EF),
-                          size: 32,
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                          child: Text(
-                            'Upload File',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                )),
-            Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-                child: Container(
-                  width: double.infinity,
-                  constraints: BoxConstraints(
-                    maxWidth: 500,
-                  ),
-                  decoration: BoxDecoration(
-                    // color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      // color: Color(0xFFE5E7EB),
-                      width: 2,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(8),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Icon(
-                          Icons.airline_stops_sharp,
-                          color: Color(0xFF6F61EF),
-                          size: 32,
-                        ),
-                        Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-                          child: Text(
-                            'Confirm',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ))
+            Row(children: [
+              IconButton(
+                onPressed: () {
+                  print("pressed");
+                },
+                icon: const Icon(Icons.upload_file),
+              ),
+              IconButton(
+                onPressed: () {
+                  print("post");
+                  getHttp();
+                },
+                icon: const Icon(Icons.outbond_outlined),
+              )
+            ]),
           ]),
         ),
       )),
@@ -200,5 +153,79 @@ Padding(
     ),
   ),
 )
-
+// Padding(
+            //     padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+            //     child: Container(
+            //       width: double.infinity,
+            //       constraints: BoxConstraints(
+            //         maxWidth: 500,
+            //       ),
+            //       decoration: BoxDecoration(
+            //         // color: Colors.white,
+            //         borderRadius: BorderRadius.circular(12),
+            //         border: Border.all(
+            //           // color: Color(0xFFE5E7EB),
+            //           width: 2,
+            //         ),
+            //       ),
+            //       child: Padding(
+            //         padding: EdgeInsets.all(8),
+            //         child: Row(
+            //           mainAxisSize: MainAxisSize.max,
+            //           children: [
+            //             Icon(
+            //               Icons.upload_file,
+            //               color: Color(0xFF6F61EF),
+            //               size: 32,
+            //             ),
+            //             Padding(
+            //               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+            //               child: Text(
+            //                 'Upload File',
+            //                 textAlign: TextAlign.center,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     )),
+            // Padding(
+            //     padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
+            //     child: Container(
+            //       width: double.infinity,
+            //       constraints: BoxConstraints(
+            //         maxWidth: 500,
+            //       ),
+            //       decoration: BoxDecoration(
+            //         // color: Colors.white,
+            //         borderRadius: BorderRadius.circular(12),
+            //         border: Border.all(
+            //           // color: Color(0xFFE5E7EB),
+            //           width: 2,
+            //         ),
+            //       ),
+            //       child: Padding(
+            //         padding: EdgeInsets.all(8),
+            //         child: Row(
+            //           mainAxisSize: MainAxisSize.max,
+            //           children: [
+            //             Icon(
+            //               Icons.airline_stops_sharp,
+            //               color: Color(0xFF6F61EF),
+            //               size: 32,
+            //             ),
+            //             Padding(
+            //               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
+            //               child: Text(
+            //                 'Submit',
+            //                 textAlign: TextAlign.center,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     )),
+            // Padding(
+            //   padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+            // ),
  */

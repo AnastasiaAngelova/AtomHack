@@ -1,7 +1,12 @@
 package main
 
-import "fmt"
-
 func main() {
-	fmt.Print("Start")
+	load_from_db()
+	done := make(chan bool)
+	go runSubscriber(done)
+	go runHttpServer(done)
+	// go CLReader(done)
+	<-done
+	<-done
+
 }
