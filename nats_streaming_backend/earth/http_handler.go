@@ -75,7 +75,7 @@ func runHttpServer(done chan bool) {
 	signalChan := make(chan os.Signal, 1)
 	go func() {
 		log.Println("Server run on: http:localhost:4000")
-		err := http.ListenAndServe(":4000", mux)
+		err := http.ListenAndServe(":4001", mux)
 		log.Fatal(err)
 		for range signalChan {
 			fmt.Printf("\nReceived an interrupt, unsubscribing and closing connection...\n\n")

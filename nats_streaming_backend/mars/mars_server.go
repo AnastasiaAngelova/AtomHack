@@ -10,9 +10,17 @@ import (
 	"os"
 	"strconv"
 
+	_ "github.com/lib/pq"
+
 	nats "github.com/nats-io/nats.go"
 	"github.com/nats-io/stan.go"
 )
+
+func main() {
+
+	runMarsServer()
+
+}
 
 type MarsServer struct {
 	server        http.Server
@@ -138,7 +146,7 @@ func (srv *MarsServer) sendData() {
 }
 
 func runMarsServer() {
-	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=nats_db sslmode=disable")
+	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=mars sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -149,7 +157,7 @@ func runMarsServer() {
 		log.Fatal(err)
 	}
 	defer nc.Close()
-	sc, err := stan.Connect("", "", stan.NatsConn(nc))
+	sc, err := stan.Connect("test-cluster", "mars", stan.NatsConn(nc))
 	if err != nil {
 		log.Fatalf("Can't connect: %v.\nMake sure a NATS Streaming Server is running at: %s", err, "0.0.0.0:4222")
 	}
@@ -169,7 +177,9 @@ func runMarsServer() {
 	}
 
 	signalChan := make(chan os.Signal, 1)
+	done := make(chan bool)
 	go func() {
+
 		go func() {
 			for {
 				marsSrv.sendData()
@@ -182,5 +192,7 @@ func runMarsServer() {
 		for range signalChan {
 			fmt.Printf("\nReceived an interrupt, unsubscribing and closing connection...\n\n")
 		}
+		done <- true
 	}()
+	<-done
 }

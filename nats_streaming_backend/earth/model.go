@@ -82,7 +82,7 @@ func (c Cache) from_json(json_str string) error {
 	c.Reports[report.Id] = report
 
 	// log.Print(cache.Orders[len(cache.Orders)-1])
-	err1 := saveInDB(report.Id, json_str)
+	err1 := saveInDB(report.Id)
 	if err1 != nil {
 		return err1
 	}
@@ -161,7 +161,7 @@ func (o *Report) Scan(value interface{}) error {
 	return json.Unmarshal(b, &o)
 }
 
-func saveInDB(id int, json_str string) error {
+func saveInDB(id int) error {
 
 	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=nats_db sslmode=disable")
 	if err != nil {
