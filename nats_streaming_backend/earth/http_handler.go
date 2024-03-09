@@ -5,15 +5,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 func showOrder(w http.ResponseWriter, r *http.Request) {
-	id := r.URL.Query().Get("id")
-	// if err != nil || id < 1 {
-	// 	http.NotFound(w, r)
-	// 	return
-	// }
-	if _, ok := cache.Orders[id]; ok {
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	if err != nil || id < 1 {
+		http.NotFound(w, r)
+		return
+	}
+	if _, ok := cache.Reports[id]; ok {
 		fmt.Fprint(w, cache.to_json(id))
 
 		// if val == nil

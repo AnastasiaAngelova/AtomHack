@@ -42,6 +42,8 @@ func printMsg(m *stan.Msg, i int) {
 	log.Printf("[#%d] Received: %s\n", i, m)
 }
 
+var readFile int = 0
+
 func runSubscriber(done chan bool) {
 	var (
 		clusterID, clientID string
@@ -133,11 +135,20 @@ func runSubscriber(done chan bool) {
 	mcb := func(msg *stan.Msg) {
 		// i++
 		// printMsg(msg, i)
-		err := cache.from_json(string(msg.Data))
-		if err != nil {
-			// sc.Close()
-			log.Fatal(err)
+		if readFile == 0 {
+			err := cache.from_json(string(msg.Data))
+			if err != nil {
+				// sc.Close()
+				log.Fatal(err)
+			}
+			Request.createFile()
+
+		} else {
+			Request.writeFile(msg.Data)
+			readFile--
+
 		}
+
 	}
 
 	sub, err := sc.QueueSubscribe(subj, qgroup, mcb, startOpt, stan.DurableName(durable))
