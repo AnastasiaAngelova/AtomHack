@@ -5,6 +5,7 @@ func main() {
 	done := make(chan bool)
 	go runSubscriber(done)
 	go runHttpServer(done)
+	runMarsServer()
 	// go CLReader(done)
 	<-done
 	<-done
