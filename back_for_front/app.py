@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import psycopg2
 import requests
 
@@ -14,14 +14,12 @@ except psycopg2.Error as e:
     print(e)
     print('Can`t establish connection to database')
 
-@app.route('/post', methods=['POST'])
-def post_func():    
+@app.route('/report', methods=['POST'])
+def new_report():    
 
     req = request
     for file_name in req.files.keys():
         file = req.files[file_name]
-
-
 
     file_name += '_' + str(hash(req.form['text'])) 
     with open(file_name, 'wb') as f:
@@ -41,6 +39,38 @@ def post_func():
 
     return 'OK'
 
+
+@app.route('/reports', methods=['GET'])
+def get_reports():    
+
+    try:
+        cur = conn.cursor()
+        cur.execute("select * from public.report ;")
+        res = cur.fetchall()
+        
+        cur.close()
+    except:
+        print('Can`t select from database')
+
+
+    return jsonify({'result': res})
+
+@app.route('/report', methods=['GET'])
+def get_report_by_id():   
+    print(request.args) 
+
+    try:
+        cur = conn.cursor()
+        cur.execute("select * from public.report where id = %s ;", (request.args['id'],))
+        res = cur.fetchall()
+        print(id)
+        print( res ) 
+        cur.close()
+    except:
+        print('Can`t select from database')
+
+
+    return jsonify({'result': res})
 
 
 
