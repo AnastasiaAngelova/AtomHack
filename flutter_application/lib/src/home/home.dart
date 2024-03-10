@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 
 import '../settings/settings_view.dart';
 import 'package:dio/dio.dart';
@@ -102,8 +103,13 @@ class ReportPage extends StatelessWidget {
             ),
             Row(children: [
               IconButton(
-                onPressed: () {
-                  print("pressed");
+                onPressed: () async {
+                  FilePickerResult? result =
+                      await FilePicker.platform.pickFiles();
+
+                  if (result != null) {
+                    print(result.files.first.name);
+                  }
                 },
                 icon: const Icon(Icons.upload_file),
               ),
@@ -140,18 +146,20 @@ class SentMailList extends StatelessWidget {
         title: const Text('Отправленные в почте'),
       ),
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: <Widget>[
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Меню',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+            Container(
+              width: double.infinity, // Растянуть на всю ширину
+              child: DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'Меню',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                  ),
                 ),
               ),
             ),
@@ -168,10 +176,35 @@ class SentMailList extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) =>  PendingMailList(),
+                    builder: (context) => PendingMailList(),
                   ),
                 );
               },
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  color: Colors.orange, // Ваш цвет
+                  child: ListTile(
+                    title: const Text(
+                      'Создать сообщение',
+                      style: TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(context); // Закрыть боковую панель
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ReportPage(),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
           ],
         ),
