@@ -22,14 +22,22 @@ class ReportPage extends StatelessWidget {
   }
   void createReport(String name, String text, String? file) async {
     String url = 'http://127.0.0.1:5000/report';
+    String f = (file != null && file != '') ? file : '';
     try {
-      FormData formData = FormData.fromMap({
-        'name': name,
-        'text': text,
-        'file': (file != null && file != '')
-            ? await MultipartFile.fromFile(file, filename: 'file')
-            : '',
-      });
+      FormData formData;
+      if (file != null && file != ''){
+         formData = FormData.fromMap({
+          'name': name,
+          'text': text,
+          'files': {file: await MultipartFile.fromFile(file, filename: 'file')},
+        });
+      }
+      else{
+         formData = FormData.fromMap({
+          'name': name,
+          'text': text,
+        });
+      }
 
       Response response = await dio.post(
         url,
@@ -46,7 +54,7 @@ class ReportPage extends StatelessWidget {
       print('Error sending request: $error');
     }
   }
-  
+
   bool fileFlag = false;
   FilePickerResult? result;
 
