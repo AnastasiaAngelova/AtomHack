@@ -1,6 +1,8 @@
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-
+import 'package:file_picker/file_picker.dart';
 import '../settings/settings_view.dart';
 import 'package:dio/dio.dart';
 // import 'dio';
@@ -24,9 +26,11 @@ class ReportPage extends StatelessWidget {
     // TODO: implement build
     return Scaffold(
         appBar: AppBar(
-          title:
-              Text("MARS report system", style: TextStyle(color: Colors.white)),
-          backgroundColor: Colors.deepPurple[900],
+          title: const Text("MARS report system",
+              style: TextStyle(color: Colors.white)),
+          backgroundColor: Theme.of(context)
+              .colorScheme
+              .primaryContainer, //Colors.deepPurple[900],
           actions: [
             IconButton(
               icon: const Icon(
@@ -51,7 +55,7 @@ class ReportPage extends StatelessWidget {
             ),
           ],
         ),
-        body: Row(children: [Left(), Middle()]));
+        body: const Row(children: [Left(), Middle()]));
   }
 }
 
@@ -61,8 +65,19 @@ class Middle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
+    return const ColoredBox(
       color: Colors.black12,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            SizedBox(
+              // width: ,
+              child: Report(),
+            )
+          ],
+        ),
+      ),
       // child: ListView.builder(
       //     restorationId: 'sampleItemListView',
       //     // itemCount: 3,
@@ -91,65 +106,85 @@ class Left extends StatelessWidget {
   Widget build(BuildContext context) {
     return ColoredBox(
       color: Colors.deepPurple,
+      // top: true,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Stack(
           children: [
             Column(
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 TextButton.icon(
                   onPressed: () {
                     print("Отправлены");
                   },
-                  icon: Icon(
+                  icon: const Icon(
                     color: Color.fromARGB(255, 255, 255, 255),
                     Icons.send_rounded,
                   ),
-                  label:
-                      Text("Отправлены", style: TextStyle(color: Colors.white)),
+                  label: const Text("Отправлены",
+                      style: TextStyle(color: Colors.white)),
                 ),
                 TextButton.icon(
                     onPressed: () {
                       print("Ожидают отправки");
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.timelapse,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
-                    label: Text("Ожидают отправки",
+                    label: const Text("Ожидают отправки",
                         style: TextStyle(color: Colors.white))),
                 TextButton.icon(
                     onPressed: () {
                       print("Edit draft");
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.edit_document,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
-                    label: Text("Черновик",
+                    label: const Text("Черновик",
                         style: TextStyle(color: Colors.white))),
               ],
             ),
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: Checkbox.width)),
+            const Padding(
+                padding: EdgeInsets.symmetric(vertical: Checkbox.width)),
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                FileUploadButton(),
                 TextButton.icon(
                     onPressed: () {
                       print("Create report");
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.note_add,
                       color: Color.fromARGB(255, 255, 255, 255),
                     ),
-                    label: Text("Create report",
+                    label: const Text("Create report",
                         style: TextStyle(color: Colors.white))),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class FileUploadButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      icon: Icon(Icons.upload_file),
+      label: Text('UPLOAD FILE'),
+      onPressed: () async {
+        var picked = await FilePicker.platform.pickFiles();
+
+        if (picked != null) {
+          print(picked.files.first.name);
+        }
+      },
     );
   }
 }
