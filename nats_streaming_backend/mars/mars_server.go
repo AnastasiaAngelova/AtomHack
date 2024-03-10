@@ -52,6 +52,7 @@ type Report struct {
 }
 
 func (srv *MarsServer) sendData() {
+	fmt.Println(1)
 	idStart, err := srv.db.Query("select id from report where status = 1 limit 1")
 	var lastSent int
 	if err != nil {
@@ -208,8 +209,8 @@ func parseDates() []Period {
 	for _, periodTmp := range periodsTmp {
 		tFrom := getDatetimeFromStr(periodTmp.From)
 		tTo := getDatetimeFromStr(periodTmp.To)
-		fmt.Println(tFrom)
-		fmt.Println(tTo)
+		// fmt.Println(tFrom)
+		// fmt.Println(tTo)
 		period := Period{
 			Speed: periodTmp.Speed,
 			From:  tFrom,
@@ -229,13 +230,17 @@ func runMarsServer() {
 			curPeriodInd = i
 		}
 	}
-	for _, period := range periods {
-		if timeNow.Before(period.From) {
-			time.Sleep(time.Until(period.From))
-			break
+	log.Print("before before sleep")
+	if curPeriodInd == -1 {
+		for _, period := range periods {
+			if timeNow.Before(period.From) {
+				time.Sleep(time.Until(period.From))
+				break
+			}
 		}
 	}
 
+	log.Print("before after sleep")
 	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=mars sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
