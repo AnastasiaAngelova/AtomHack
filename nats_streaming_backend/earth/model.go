@@ -56,21 +56,18 @@ func (req *RequestFromNats) createFile() {
 	// return file
 }
 
-func (req RequestFromNats) writeFile(data []byte, size int) {
-	println(data[0])
-	file, err := os.OpenFile(req.Report.FileName, os.O_APPEND|os.O_WRONLY, 0644)
+func (req RequestFromNats) writeFile(data []byte) {
+	// println(data[0])
+	file, err := os.OpenFile(Request.Report.FileName, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Print(err)
 	}
-	defer file.Close()
-	for i := 0; i < size; i++ {
-
-		file.Write([]byte{data[i]})
-	}
+	file.Write(data)
+	file.Close()
 
 }
 
-func (c Cache) from_json(json_str string) error {
+func (c *Cache) from_json(json_str string) error {
 	request := RequestFromNats{}
 
 	if err := json.Unmarshal([]byte(json_str), &request); err != nil {
@@ -185,12 +182,12 @@ func saveInDB(id int) error {
 	sqlStatement := `
 	INSERT INTO reports VALUES
 	($1,
-	$2, $3)`
+	$2, $3, $4)`
 
 	// fmt.Print(cache.Orders[id])
 	fmt.Print(report.FileName)
 	fmt.Print("\n")
-	_, err = db.Exec(sqlStatement, id, report.to_json(), report.FileName)
+	_, err = db.Exec(sqlStatement, id, report.FileName, report.Body, report.Name)
 	// _, err = db.Exec(sqlStatement, 4, `{"id":4}`, "filename.txt")
 	if err != nil {
 

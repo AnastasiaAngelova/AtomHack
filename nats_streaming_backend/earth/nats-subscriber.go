@@ -152,14 +152,10 @@ func runSubscriber(done chan bool) {
 			}
 
 		} else {
-			fmt.Println(msg.Data)
-			println(Request.Report.FileName)
-			file, err := os.OpenFile(Request.Report.FileName, os.O_APPEND|os.O_WRONLY, 0644)
-			if err != nil {
-				fmt.Print(err)
-			}
-			file.Write(msg.Data)
-			file.Close()
+			// fmt.Println(msg.Data)
+			// println(Request.Report.FileName)
+
+			Request.writeFile(msg.Data)
 			readFile--
 
 		}

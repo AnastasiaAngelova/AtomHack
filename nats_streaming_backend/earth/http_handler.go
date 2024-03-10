@@ -14,6 +14,7 @@ func showOrder(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	fmt.Print(cache)
 	if _, ok := cache.Reports[id]; ok {
 		fmt.Fprint(w, cache.to_json(id))
 
