@@ -131,17 +131,19 @@ class SentMailList extends StatelessWidget {
     'Письмо 5',
   ];
 
+ SentMailList({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Отправленные в почте'),
+        title: const Text('Отправленные в почте'),
       ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.blue,
               ),
@@ -154,19 +156,19 @@ class SentMailList extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text('Отправленные'),
+              title: const Text('Отправленные'),
               onTap: () {
                 Navigator.pop(context); // Закрыть боковую панель
               },
             ),
             ListTile(
-              title: Text('Ожидают отправки'),
+              title: const Text('Ожидают отправки'),
               onTap: () {
                 Navigator.pop(context); // Закрыть боковую панель
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => PendingMailList(),
+                    builder: (context) =>  PendingMailList(),
                   ),
                 );
               },
@@ -200,11 +202,13 @@ class PendingMailList extends StatelessWidget {
     'Письмо E',
   ];
 
+PendingMailList({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ожидают отправки'),
+        title: const Text('Ожидают отправки'),
       ),
       body: ListView.builder(
         itemCount: pendingMails.length,

@@ -73,7 +73,7 @@ import 'settings/settings_view.dart';
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
                   case SampleItemDetailsView.routeName:
-                    return const SampleItemDetailsView();
+                    return SampleItemDetailsView();
                   case SampleItemListView.routeName:
                   case ReportPage.routeName:
                   default:
