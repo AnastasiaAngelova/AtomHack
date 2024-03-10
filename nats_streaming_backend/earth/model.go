@@ -210,17 +210,24 @@ func load_from_db() {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id string
-		var data string
-		var path string
+		var report_id int
+		var report_text string
+		var file_name string
+		var reporter_name string
 
-		if err := rows.Scan(&id, &data, &path); err != nil {
+		if err := rows.Scan(&report_id, &file_name, &report_text, &reporter_name); err != nil {
 			log.Fatal(err)
 		}
 
 		// fmt.Print(reflect.TypeOf(data))
 		// fmt.Print(data)
 		// cache.from_db(id, data)
+		cache.Reports[report_id] = Report{
+			Id:       report_id,
+			Name:     reporter_name,
+			Body:     report_text,
+			FileName: file_name,
+		}
 
 		// cache[id] = data
 	}

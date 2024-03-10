@@ -126,7 +126,10 @@ func (srv *MarsServer) sendData() {
 		for i := 0; i < totalPartsNum; i++ {
 			partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
 
-			if partSize < srv.qouta {
+			if partSize > srv.qouta {
+				if len(srv.periods) == 1 {
+					log.Fatal("Закончились периоды доступности\n")
+				}
 				srv.periods = srv.periods[1:]
 				time.Sleep(srv.periods[0].From.Sub(time.Now()))
 				srv.qouta = int(131072 * srv.periods[0].Speed * float32(srv.periods[0].To.Sub(time.Now()).Seconds()))

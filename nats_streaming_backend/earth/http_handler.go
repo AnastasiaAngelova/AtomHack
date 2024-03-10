@@ -75,7 +75,7 @@ func runHttpServer(done chan bool) {
 	mux.HandleFunc("/report", showOrder)
 	signalChan := make(chan os.Signal, 1)
 	go func() {
-		log.Println("Server run on: http:localhost:4000")
+		log.Println("Server run on: http:localhost:4001")
 		err := http.ListenAndServe(":4001", mux)
 		log.Fatal(err)
 		for range signalChan {
