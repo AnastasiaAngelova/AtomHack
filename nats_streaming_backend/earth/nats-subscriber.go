@@ -147,7 +147,7 @@ func runSubscriber(done chan bool) {
 			Request.createFile()
 			readFile, _ = strconv.Atoi(Request.ClusterCounter)
 			if readFile > max_counter {
-				println(readFile)
+				// println(readFile)
 				max_counter = readFile
 			}
 

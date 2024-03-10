@@ -176,7 +176,7 @@ func saveInDB(id int) error {
 	}
 	defer db.Close()
 	report := cache.Reports[id]
-	fmt.Print()
+	// fmt.Print()
 	// fmt.
 	// fmt.Print(order.to_json())
 	sqlStatement := `
@@ -185,8 +185,8 @@ func saveInDB(id int) error {
 	$2, $3, $4)`
 
 	// fmt.Print(cache.Orders[id])
-	fmt.Print(report.FileName)
-	fmt.Print("\n")
+	// fmt.Print(report.FileName)
+	// fmt.Print("\n")
 	_, err = db.Exec(sqlStatement, id, report.FileName, report.Body, report.Name)
 	// _, err = db.Exec(sqlStatement, 4, `{"id":4}`, "filename.txt")
 	if err != nil {

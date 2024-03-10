@@ -32,7 +32,9 @@ type MarsServer struct {
 }
 
 func (srv *MarsServer) newReport(w http.ResponseWriter, r *http.Request) {
+	log.Print("nevReport iut of if")
 	if len(srv.reportIdQueue) == 0 {
+		log.Print("nevReport in if")
 		srv.reportIdQueue <- true
 	}
 }
@@ -149,9 +151,13 @@ func (srv *MarsServer) sendData() {
 		}
 		//panic("<-------bruh")
 		sqlStatement := `UPDATE report
-		SET status=?
-		WHERE id=?;`
+		SET status=$1
+		WHERE id=$2;`
 		_, err = srv.db.Exec(sqlStatement, 2, reportRequest.Report.Id)
+		if err != nil {
+			panic(err)
+		}
+		// panic("bruh")
 	}
 }
 
