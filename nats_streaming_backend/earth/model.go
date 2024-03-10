@@ -44,7 +44,7 @@ var cache = Cache{
 	Reports: make(map[int]Report),
 }
 
-func (req RequestFromNats) createFile() {
+func (req *RequestFromNats) createFile() {
 
 	file, err := os.Create("data/" + req.Report.FileName)
 	defer file.Close()
