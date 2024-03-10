@@ -9,6 +9,8 @@ class ReportPage extends StatelessWidget {
 
   final dio = Dio();
 
+  ReportPage({super.key});
+
   void getHttp() async {
     final response = await dio.get('http://127.0.0.1:4000/order?id=id_1');
     print(response);
@@ -33,11 +35,11 @@ class ReportPage extends StatelessWidget {
       ),
       body: SafeArea(
           child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
+        padding: const EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
         child: SingleChildScrollView(
           child: Column(children: [
-            Text('Create Report'),
-            Padding(
+            const Text('Create Report'),
+            const Padding(
               padding: EdgeInsetsDirectional.fromSTEB(0, 4, 0, 0),
             ),
             Column(
@@ -46,7 +48,7 @@ class ReportPage extends StatelessWidget {
                     decoration: InputDecoration(
                   labelText: 'Input name...',
                   enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFE5E7EB),
                       width: 2,
                     ),
@@ -59,43 +61,43 @@ class ReportPage extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: 'Input report',
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFFE5E7EB),
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(0),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFF6F61EF),
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(0),
                     ),
                     errorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFFFF5963),
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(0),
                     ),
                     focusedErrorBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0xFFFF5963),
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(0),
                     ),
                     contentPadding:
-                        EdgeInsetsDirectional.fromSTEB(16, 24, 16, 12),
+                        const EdgeInsetsDirectional.fromSTEB(16, 24, 16, 12),
                   ),
                   maxLines: 100,
                   minLines: 6,
-                  cursorColor: Color(0xFF6F61EF),
+                  cursorColor: const Color(0xFF6F61EF),
                 )
               ],
             ),
-            Padding(
+            const Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
             ),
             Row(children: [
@@ -120,112 +122,103 @@ class ReportPage extends StatelessWidget {
   }
 }
 
-/**
-Padding(
-  padding: EdgeInsetsDirectional.fromSTEB(0, 24, 0, 12),
-  child: FFButtonWidget(
-    onPressed: () {
-      print('Button pressed ...');
-    },
-    text: 'Submit Ticket',
-    icon: Icon(
-      Icons.receipt_long,
-      size: 15,
-    ),
-    options: FFButtonOptions(
-      width: double.infinity,
-      height: 54,
-      padding: EdgeInsets.all(0),
-      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-      color: Color(0xFF6F61EF),
-      textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-            fontFamily: 'Plus Jakarta Sans',
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-      elevation: 4,
-      borderSide: BorderSide(
-        color: Colors.transparent,
-        width: 1,
+class SentMailList extends StatelessWidget {
+  final List<String> sentMails = [
+    'Письмо 1',
+    'Письмо 2',
+    'Письмо 3',
+    'Письмо 4',
+    'Письмо 5',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Отправленные в почте'),
       ),
-      borderRadius: BorderRadius.circular(12),
-    ),
-  ),
-)
-// Padding(
-            //     padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-            //     child: Container(
-            //       width: double.infinity,
-            //       constraints: BoxConstraints(
-            //         maxWidth: 500,
-            //       ),
-            //       decoration: BoxDecoration(
-            //         // color: Colors.white,
-            //         borderRadius: BorderRadius.circular(12),
-            //         border: Border.all(
-            //           // color: Color(0xFFE5E7EB),
-            //           width: 2,
-            //         ),
-            //       ),
-            //       child: Padding(
-            //         padding: EdgeInsets.all(8),
-            //         child: Row(
-            //           mainAxisSize: MainAxisSize.max,
-            //           children: [
-            //             Icon(
-            //               Icons.upload_file,
-            //               color: Color(0xFF6F61EF),
-            //               size: 32,
-            //             ),
-            //             Padding(
-            //               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-            //               child: Text(
-            //                 'Upload File',
-            //                 textAlign: TextAlign.center,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     )),
-            // Padding(
-            //     padding: EdgeInsetsDirectional.fromSTEB(0, 16, 0, 0),
-            //     child: Container(
-            //       width: double.infinity,
-            //       constraints: BoxConstraints(
-            //         maxWidth: 500,
-            //       ),
-            //       decoration: BoxDecoration(
-            //         // color: Colors.white,
-            //         borderRadius: BorderRadius.circular(12),
-            //         border: Border.all(
-            //           // color: Color(0xFFE5E7EB),
-            //           width: 2,
-            //         ),
-            //       ),
-            //       child: Padding(
-            //         padding: EdgeInsets.all(8),
-            //         child: Row(
-            //           mainAxisSize: MainAxisSize.max,
-            //           children: [
-            //             Icon(
-            //               Icons.airline_stops_sharp,
-            //               color: Color(0xFF6F61EF),
-            //               size: 32,
-            //             ),
-            //             Padding(
-            //               padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 0),
-            //               child: Text(
-            //                 'Submit',
-            //                 textAlign: TextAlign.center,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //     )),
-            // Padding(
-            //   padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
-            // ),
- */
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Меню',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                ),
+              ),
+            ),
+            ListTile(
+              title: Text('Отправленные'),
+              onTap: () {
+                Navigator.pop(context); // Закрыть боковую панель
+              },
+            ),
+            ListTile(
+              title: Text('Ожидают отправки'),
+              onTap: () {
+                Navigator.pop(context); // Закрыть боковую панель
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => PendingMailList(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+      body: ListView.builder(
+        itemCount: sentMails.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(sentMails[index]),
+            onTap: () {
+              // Действие при нажатии на элемент списка (по желанию)
+              // Например, можно открыть детали письма или выполнить другое действие
+              print('Выбрано письмо: ${sentMails[index]}');
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class PendingMailList extends StatelessWidget {
+  final List<String> pendingMails = [
+    'Письмо A',
+    'Письмо B',
+    'Письмо C',
+    'Письмо D',
+    'Письмо E',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ожидают отправки'),
+      ),
+      body: ListView.builder(
+        itemCount: pendingMails.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(pendingMails[index]),
+            onTap: () {
+              // Действие при нажатии на элемент списка (по желанию)
+              // Например, можно открыть детали письма или выполнить другое действие
+              print('Выбрано письмо: ${pendingMails[index]}');
+            },
+          );
+        },
+      ),
+    );
+  }
+}
