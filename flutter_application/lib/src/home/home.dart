@@ -3,6 +3,8 @@ import 'package:file_picker/file_picker.dart';
 
 import '../settings/settings_view.dart';
 import 'package:dio/dio.dart';
+import 'dart:convert';
+
 // import 'dio';
 
 class ReportPage extends StatelessWidget {
@@ -14,6 +16,7 @@ class ReportPage extends StatelessWidget {
 
   void getHttp() async {
     final response = await dio.get('http://127.0.0.1:4000/order?id=id_1');
+
     print(response);
   }
 
@@ -98,8 +101,9 @@ class ReportPage extends StatelessWidget {
             const Padding(
               padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
             ),
-            Row(children: [
-              IconButton(
+            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              TextButton.icon(
+                label: Text("Upload File"),
                 onPressed: () async {
                   FilePickerResult? result =
                       await FilePicker.platform.pickFiles();
@@ -110,34 +114,70 @@ class ReportPage extends StatelessWidget {
                 },
                 icon: const Icon(Icons.upload_file),
               ),
-              IconButton(
+              TextButton.icon(
+                label: Text("Push Report"),
                 onPressed: () {
                   print("post");
                   getHttp();
                 },
                 icon: const Icon(Icons.outbond_outlined),
-              )
+              ),
+              // TextButton.icon(
+              //   label: Text("Save Draft"),
+              //   onPressed: () {
+              //     print("save draft");
+              //     postHttp();
+              //   },
+              //   icon: const Icon(Icons.save_outlined),
+              // )
             ]),
           ]),
         ),
       )),
     );
   }
+
+  void postHttp() async {}
 }
 
+class SentMailListState extends ChangeNotifier {
+  var sentMails = [];
+  final dio = Dio();
+  // ↓ Add this.
+  void getSentMailsHttp() async {
+    final response = await dio.get('http://127.0.0.1:5000/reports');
+    sentMails = [];
+    sentMails.add(response.data);
+    print(response.data);
+    notifyListeners();
+  }
+}
+
+var sentMails = [];
+
 class SentMailList extends StatelessWidget {
-  final List<String> sentMails = [
-    'Письмо 1',
-    'Письмо 2',
-    'Письмо 3',
-    'Письмо 4',
-    'Письмо 5',
-  ];
+  // final List<String> sentMails = [];
+  final dio = Dio();
 
   SentMailList({super.key});
+  getSentMailsHttp() async {
+    final response = await dio.get('http://127.0.0.1:5000/reports');
+    var Mails = ["ehwnkenklw", "hwleeclwncenklw", "eij;wecmwcmw"];
+    // Map<String, dynamic> jsonMap = jsonDecode(response.data.toString());
+    // print(jsonMap);
+    // for (var element in jsonMap) {
+    //   Mails.add(element[1]);
+    // }
+
+    print(Mails);
+    // notifyListeners();
+    return Mails;
+  }
 
   @override
   Widget build(BuildContext context) {
+    // var pair = appState.current; // ← Add this.
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Отправленные в почте'),
@@ -162,13 +202,18 @@ class SentMailList extends StatelessWidget {
             ),
             ListTile(
               title: const Text('Отправленные'),
-              onTap: () {
+              onTap: () async {
+                // appState.getSent
+
+                sentMails = await getSentMailsHttp();
+
                 Navigator.pop(context); // Закрыть боковую панель
               },
             ),
             ListTile(
               title: const Text('Ожидают отправки'),
               onTap: () {
+                getSentMailsHttp();
                 Navigator.pop(context); // Закрыть боковую панель
                 Navigator.push(
                   context,
@@ -182,7 +227,7 @@ class SentMailList extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  color: Colors.orange, // Ваш цвет
+                  color: Colors.blue, // Ваш цвет
                   child: ListTile(
                     title: const Text(
                       'Создать сообщение',
@@ -212,6 +257,7 @@ class SentMailList extends StatelessWidget {
           return ListTile(
             title: Text(sentMails[index]),
             onTap: () {
+              getSentMailsHttp();
               Navigator.of(context).push(_buildPageRoute(sentMails[index]));
             },
           );
@@ -229,7 +275,8 @@ class SentMailList extends StatelessWidget {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;
         const curve = Curves.easeInOut;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         var offsetAnimation = animation.drive(tween);
         return SlideTransition(position: offsetAnimation, child: child);
       },
@@ -240,7 +287,8 @@ class SentMailList extends StatelessWidget {
 class _EmailContentDialog extends StatelessWidget {
   final String emailContent;
 
-  const _EmailContentDialog({Key? key, required this.emailContent}) : super(key: key);
+  const _EmailContentDialog({Key? key, required this.emailContent})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +313,7 @@ class PendingMailList extends StatelessWidget {
     'Письмо E',
   ];
 
-PendingMailList({super.key});
+  PendingMailList({super.key});
 
   @override
   Widget build(BuildContext context) {
