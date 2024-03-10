@@ -44,21 +44,30 @@ var cache = Cache{
 	Reports: make(map[int]Report),
 }
 
-func (req RequestFromNats) createFile() *os.File {
-	file, err := os.Create(req.Report.FileName)
+func (req RequestFromNats) createFile() {
+
+	file, err := os.Create("data/" + req.Report.FileName)
+	defer file.Close()
+	req.Report.FileName = "data/" + req.Report.FileName
 	if err != nil {
 		fmt.Print(err)
 	}
-	return file
+
+	// return file
 }
 
-func (req RequestFromNats) writeFile(data []byte) {
-	file, err := os.OpenFile(req.Report.FileName, os.O_WRONLY, 0666)
+func (req RequestFromNats) writeFile(data []byte, size int) {
+	println(data[0])
+	file, err := os.OpenFile(req.Report.FileName, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Print(err)
 	}
 	defer file.Close()
-	file.Write(data)
+	for i := 0; i < size; i++ {
+
+		file.Write([]byte{data[i]})
+	}
+
 }
 
 func (c Cache) from_json(json_str string) error {
@@ -79,13 +88,14 @@ func (c Cache) from_json(json_str string) error {
 
 		// fmt.Print(val)
 	}
+
 	c.Reports[report.Id] = report
 
 	// log.Print(cache.Orders[len(cache.Orders)-1])
-	err1 := saveInDB(report.Id)
-	if err1 != nil {
-		return err1
-	}
+	// err1 := saveInDB(report.Id)
+	// if err1 != nil {
+	// 	return err1
+	// }
 	return nil
 
 }
@@ -163,22 +173,28 @@ func (o *Report) Scan(value interface{}) error {
 
 func saveInDB(id int) error {
 
-	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=nats_db sslmode=disable")
+	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=earth sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	order := cache.Reports[id]
-	// fmt.Print("\n")
+	report := cache.Reports[id]
+	fmt.Print()
+	// fmt.
 	// fmt.Print(order.to_json())
 	sqlStatement := `
-	INSERT INTO message VALUES 
-	($1, 
+	INSERT INTO reports VALUES
+	($1,
 	$2, $3)`
+
 	// fmt.Print(cache.Orders[id])
-	_, err = db.Exec(sqlStatement, id, order, order.FileName)
+	fmt.Print(report.FileName)
+	fmt.Print("\n")
+	_, err = db.Exec(sqlStatement, id, report.to_json(), report.FileName)
+	// _, err = db.Exec(sqlStatement, 4, `{"id":4}`, "filename.txt")
 	if err != nil {
-		return err
+
+		return fmt.Errorf("saveInDB ERROR: %w", err)
 	}
 	return nil
 
@@ -199,8 +215,9 @@ func load_from_db() {
 	for rows.Next() {
 		var id string
 		var data string
+		var path string
 
-		if err := rows.Scan(&id, &data); err != nil {
+		if err := rows.Scan(&id, &data, &path); err != nil {
 			log.Fatal(err)
 		}
 

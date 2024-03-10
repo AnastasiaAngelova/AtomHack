@@ -59,6 +59,7 @@ func (srv *MarsServer) sendData() {
 		if err := idStart.Scan(&lastSent); err != nil {
 			log.Fatal(err)
 		}
+		// fmt.Printf("lastSent:%d\n", lastSent)
 	}
 
 	idEnd, err := srv.db.Query("select id from report where status = 1 limit 1")
@@ -71,13 +72,14 @@ func (srv *MarsServer) sendData() {
 		if err := idEnd.Scan(&lastReceived); err != nil {
 			log.Fatal(err)
 		}
+		// fmt.Printf("lastReceived:%d\n", lastReceived)
 	}
-	if lastSent+1 > lastReceived {
-		<-srv.reportIdQueue
-		return
-	}
+	// if lastSent >= lastReceived {
+	// 	<-srv.reportIdQueue
+	// 	return
+	// }
 
-	rows, err := srv.db.Query("select * from report where id = " + strconv.Itoa(lastSent+1))
+	rows, err := srv.db.Query("select * from report where id = " + strconv.Itoa(lastSent))
 	if err != nil {
 		log.Fatal(err) //TODO переделять в что-то менее фатальное
 	}
@@ -93,6 +95,7 @@ func (srv *MarsServer) sendData() {
 		if err := rows.Scan(&id, &reportText, &name, &path, &status); err != nil {
 			log.Fatal(err)
 		}
+		// fmt.Printf("id:%d status: %d\n", id, status)
 
 		file, err := os.Open(path)
 
@@ -109,6 +112,7 @@ func (srv *MarsServer) sendData() {
 		const fileChunk = 1 * (1 << 20) // 1 MB, change this to your requirement
 
 		totalPartsNum := int(math.Ceil(float64(fileSize) / float64(fileChunk)))
+		println(totalPartsNum)
 
 		reportRequest := RequestFromNats{
 			ClusterCounter: strconv.Itoa(totalPartsNum),
@@ -136,11 +140,13 @@ func (srv *MarsServer) sendData() {
 			file.Read(partBuffer)
 
 			err = srv.sc.Publish("foo", partBuffer)
+			println("!!!!!!!!!!!!!")
+			println(partBuffer)
 			if err != nil {
 				log.Fatalf("Error during publish: %v\n", err)
 			}
 		}
-
+		panic("<-------bruh")
 		// TODO: апдейтнуть статус
 	}
 }
@@ -183,7 +189,10 @@ func runMarsServer() {
 		go func() {
 			for {
 				marsSrv.sendData()
+
 			}
+			done <- true
+			panic("last")
 		}()
 		log.Println("Server run on: http:localhost:4000")
 		err := marsSrv.server.ListenAndServe()

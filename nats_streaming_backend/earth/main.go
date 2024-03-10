@@ -3,7 +3,7 @@ package main
 // package earth
 
 func main() {
-	load_from_db()
+	// load_from_db()
 	done := make(chan bool)
 	go runSubscriber(done)
 	go runHttpServer(done)

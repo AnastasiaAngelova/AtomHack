@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"time"
 
 	nats "github.com/nats-io/nats.go"
@@ -43,6 +44,7 @@ func printMsg(m *stan.Msg, i int) {
 }
 
 var readFile int = 0
+var max_counter = 0
 
 func runSubscriber(done chan bool) {
 	var (
@@ -134,17 +136,30 @@ func runSubscriber(done chan bool) {
 	subj := args[0]
 	mcb := func(msg *stan.Msg) {
 		// i++
-		// printMsg(msg, i)
-		if readFile == 0 {
+
+		if readFile <= 0 {
+			// fmt.Println(msg.Data)
 			err := cache.from_json(string(msg.Data))
 			if err != nil {
 				// sc.Close()
 				log.Fatal(err)
 			}
 			Request.createFile()
+			readFile, _ = strconv.Atoi(Request.ClusterCounter)
+			if readFile > max_counter {
+				println(readFile)
+				max_counter = readFile
+			}
 
 		} else {
-			Request.writeFile(msg.Data)
+			fmt.Println(msg.Data)
+			// Request.writeFile(msg.Data, len(msg.Data))
+			file, err := os.OpenFile(Request.Report.FileName, os.O_APPEND|os.O_WRONLY, 0644)
+			if err != nil {
+				fmt.Print(err)
+			}
+			file.Write(msg.Data)
+			file.Close()
 			readFile--
 
 		}
