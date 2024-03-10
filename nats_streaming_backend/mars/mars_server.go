@@ -89,47 +89,38 @@ func (srv *MarsServer) sendData() {
 			log.Fatal(err)
 		}
 		// fmt.Printf("id:%d status: %d\n", id, status)
+		if len(path) != 0 {
+			file, err := os.Open(path)
 
-		file, err := os.Open(path)
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer file.Close()
 
-		if err != nil {
-			log.Fatal(err)
-		}
+			fileInfo, _ := file.Stat()
 
-		defer file.Close()
+			var fileSize int64 = fileInfo.Size()
 
-		fileInfo, _ := file.Stat()
+			const fileChunk = 1 * (1 << 17) // 1 Mbit, change this to your requirement
 
-		var fileSize int64 = fileInfo.Size()
+			totalPartsNum := int(math.Ceil(float64(fileSize) / float64(fileChunk)))
+			println(totalPartsNum)
 
-		const fileChunk = 1 * (1 << 17) // 1 Mbit, change this to your requirement
+			reportRequest := RequestFromNats{
+				ClusterCounter: strconv.Itoa(totalPartsNum),
+				Report: Report{
+					Id:       id,
+					Name:     name,
+					Body:     reportText,
+					FileName: path,
+				},
+			}
+			reportRequestJson, err := json.Marshal(reportRequest)
+			if err != nil {
+				panic(err)
+			}
 
-		totalPartsNum := int(math.Ceil(float64(fileSize) / float64(fileChunk)))
-		println(totalPartsNum)
-
-		reportRequest := RequestFromNats{
-			ClusterCounter: strconv.Itoa(totalPartsNum),
-			Report: Report{
-				Id:       id,
-				Name:     name,
-				Body:     reportText,
-				FileName: path,
-			},
-		}
-		reportRequestJson, err := json.Marshal(reportRequest)
-		if err != nil {
-			panic(err)
-		}
-
-		err = srv.sc.Publish("foo", reportRequestJson)
-		if err != nil {
-			log.Fatalf("Error during publish: %v\n", err)
-		}
-
-		for i := 0; i < totalPartsNum; i++ {
-			partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
-
-			if partSize > srv.qouta {
+			if len(reportRequestJson) > srv.qouta {
 				if len(srv.periods) == 1 {
 					log.Fatal("Закончились периоды доступности\n")
 				}
@@ -137,29 +128,85 @@ func (srv *MarsServer) sendData() {
 				time.Sleep(srv.periods[0].From.Sub(time.Now()))
 				srv.qouta = int(131072 * srv.periods[0].Speed * float32(srv.periods[0].To.Sub(time.Now()).Seconds()))
 			}
-			srv.qouta -= partSize
 
-			partBuffer := make([]byte, partSize)
-
-			file.Read(partBuffer)
-
-			err = srv.sc.Publish("foo", partBuffer)
-			//println("!!!!!!!!!!!!!")
-			//println(partBuffer)
+			err = srv.sc.Publish("foo", reportRequestJson)
 			if err != nil {
 				log.Fatalf("Error during publish: %v\n", err)
 			}
-		}
-		//panic("<-------bruh")
-		sqlStatement := `UPDATE report
+
+			for i := 0; i < totalPartsNum; i++ {
+				partSize := int(math.Min(fileChunk, float64(fileSize-int64(i*fileChunk))))
+
+				if partSize > srv.qouta {
+					if len(srv.periods) == 1 {
+						log.Fatal("Закончились периоды доступности\n")
+					}
+					srv.periods = srv.periods[1:]
+					time.Sleep(srv.periods[0].From.Sub(time.Now()))
+					srv.qouta = int(131072 * srv.periods[0].Speed * float32(srv.periods[0].To.Sub(time.Now()).Seconds()))
+				}
+				srv.qouta -= partSize
+
+				partBuffer := make([]byte, partSize)
+
+				file.Read(partBuffer)
+
+				err = srv.sc.Publish("foo", partBuffer)
+				//println("!!!!!!!!!!!!!")
+				//println(partBuffer)
+				if err != nil {
+					log.Fatalf("Error during publish: %v\n", err)
+				}
+			}
+			//panic("<-------bruh")
+			sqlStatement := `UPDATE report
 		SET status=$1
 		WHERE id=$2;`
-		_, err = srv.db.Exec(sqlStatement, 2, reportRequest.Report.Id)
-		if err != nil {
-			panic(err)
+			_, err = srv.db.Exec(sqlStatement, 2, reportRequest.Report.Id)
+			if err != nil {
+				panic(err)
+			}
+			// panic("bruh")
+		} else {
+			totalPartsNum := 0
+			reportRequest := RequestFromNats{
+				ClusterCounter: strconv.Itoa(totalPartsNum),
+				Report: Report{
+					Id:       id,
+					Name:     name,
+					Body:     reportText,
+					FileName: path,
+				},
+			}
+			reportRequestJson, err := json.Marshal(reportRequest)
+			if err != nil {
+				panic(err)
+			}
+			if len(reportRequestJson) > srv.qouta {
+				if len(srv.periods) == 1 {
+					log.Fatal("Закончились периоды доступности\n")
+				}
+				srv.periods = srv.periods[1:]
+				time.Sleep(srv.periods[0].From.Sub(time.Now()))
+				srv.qouta = int(131072 * srv.periods[0].Speed * float32(srv.periods[0].To.Sub(time.Now()).Seconds()))
+			}
+			err = srv.sc.Publish("foo", reportRequestJson)
+			if err != nil {
+				log.Fatalf("Error during publish: %v\n", err)
+			}
+
+			//panic("<-------bruh")
+			sqlStatement := `UPDATE report
+	SET status=$1
+	WHERE id=$2;`
+			_, err = srv.db.Exec(sqlStatement, 2, reportRequest.Report.Id)
+			if err != nil {
+				panic(err)
+			}
+			// panic("bruh")
 		}
-		// panic("bruh")
 	}
+
 }
 
 type Period struct {

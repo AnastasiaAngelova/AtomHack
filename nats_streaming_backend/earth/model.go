@@ -45,12 +45,13 @@ var cache = Cache{
 }
 
 func (req *RequestFromNats) createFile() {
-
-	file, err := os.Create("data/" + req.Report.FileName)
-	defer file.Close()
-	req.Report.FileName = "data/" + req.Report.FileName
-	if err != nil {
-		fmt.Print(err)
+	if len(req.Report.FileName) != 0 {
+		file, err := os.Create("data/" + req.Report.FileName)
+		defer file.Close()
+		req.Report.FileName = "data/" + req.Report.FileName
+		if err != nil {
+			fmt.Print(err)
+		}
 	}
 
 	// return file
