@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 import '../settings/settings_view.dart';
 import 'package:dio/dio.dart';
 // import 'dio';
 
 class ReportPage extends StatelessWidget {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController reportController = TextEditingController();
   static const routeName = '/';
 
   final dio = Dio();
@@ -16,9 +20,38 @@ class ReportPage extends StatelessWidget {
     final response = await dio.get('http://127.0.0.1:4000/order?id=id_1');
     print(response);
   }
+  void createReport(String name, String text, String? file) async {
+    String url = 'http://127.0.0.1:5000/report';
+    try {
+      FormData formData = FormData.fromMap({
+        'name': name,
+        'text': text,
+        'file': (file != null && file != '')
+            ? await MultipartFile.fromFile(file, filename: 'file')
+            : '',
+      });
+
+      Response response = await dio.post(
+        url,
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        print('Request sent successfully');
+        print(response.data);
+      } else {
+        print('Failed to send request. Status code: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error sending request: $error');
+    }
+  }
+  
+  bool fileFlag = false;
+  FilePickerResult? result;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {  
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +76,8 @@ class ReportPage extends StatelessWidget {
             Column(
               children: [
                 TextField(
-                    decoration: InputDecoration(
+                  controller: nameController,
+                  decoration: InputDecoration(
                   labelText: 'Input name...',
                   enabledBorder: UnderlineInputBorder(
                     borderSide: const BorderSide(
@@ -54,6 +88,7 @@ class ReportPage extends StatelessWidget {
                   ),
                 )),
                 TextField(
+                  controller: reportController,
                   autofocus: true,
                   obscureText: false,
                   decoration: InputDecoration(
@@ -103,8 +138,8 @@ class ReportPage extends StatelessWidget {
                 onPressed: () async {
                   FilePickerResult? result =
                       await FilePicker.platform.pickFiles();
-
                   if (result != null) {
+                    fileFlag = true;
                     print(result.files.first.name);
                   }
                 },
@@ -113,7 +148,16 @@ class ReportPage extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   print("post");
-                  getHttp();
+                  if (fileFlag == true){
+                    print("With file");
+                    String? filePath = result?.files.first.path;
+                    createReport(nameController.text, reportController.text, filePath);
+                  }
+                  else{
+                    print("Without file");
+                    createReport(nameController.text, reportController.text, '');
+                  }
+                  //getHttp();
                 },
                 icon: const Icon(Icons.outbond_outlined),
               )
@@ -182,7 +226,7 @@ class SentMailList extends StatelessWidget {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  color: Colors.orange, // Ваш цвет
+                  color: Colors.blue, // Ваш цвет
                   child: ListTile(
                     title: const Text(
                       'Создать сообщение',
