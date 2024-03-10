@@ -44,24 +44,31 @@ var cache = Cache{
 	Reports: make(map[int]Report),
 }
 
-func (req RequestFromNats) createFile() *os.File {
-	file, err := os.Create(req.Report.FileName)
-	if err != nil {
-		fmt.Print(err)
+func (req *RequestFromNats) createFile() {
+	if len(req.Report.FileName) != 0 {
+		file, err := os.Create("data/" + req.Report.FileName)
+		defer file.Close()
+		req.Report.FileName = "data/" + req.Report.FileName
+		if err != nil {
+			fmt.Print(err)
+		}
 	}
-	return file
+
+	// return file
 }
 
 func (req RequestFromNats) writeFile(data []byte) {
-	file, err := os.OpenFile(req.Report.FileName, os.O_WRONLY, 0666)
+	// println(data[0])
+	file, err := os.OpenFile(Request.Report.FileName, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Print(err)
 	}
-	defer file.Close()
 	file.Write(data)
+	file.Close()
+
 }
 
-func (c Cache) from_json(json_str string) error {
+func (c *Cache) from_json(json_str string) error {
 	request := RequestFromNats{}
 
 	if err := json.Unmarshal([]byte(json_str), &request); err != nil {
@@ -79,10 +86,11 @@ func (c Cache) from_json(json_str string) error {
 
 		// fmt.Print(val)
 	}
+
 	c.Reports[report.Id] = report
 
 	// log.Print(cache.Orders[len(cache.Orders)-1])
-	err1 := saveInDB(report.Id, json_str)
+	err1 := saveInDB(report.Id)
 	if err1 != nil {
 		return err1
 	}
@@ -161,24 +169,31 @@ func (o *Report) Scan(value interface{}) error {
 	return json.Unmarshal(b, &o)
 }
 
-func saveInDB(id int, json_str string) error {
+func saveInDB(id int) error {
 
 	db, err := sql.Open("postgres", "user=tm_admin password=admin dbname=earth sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
-	order := cache.Reports[id]
-	// fmt.Print("\n")
+	report := cache.Reports[id]
+	// fmt.Print()
+	// fmt.
 	// fmt.Print(order.to_json())
 	sqlStatement := `
-	INSERT INTO reports VALUES 
-	($1, 
-	$2, $3)`
+	INSERT INTO reports VALUES
+	($1,
+	$2, $3, $4)`
+
+
 	// fmt.Print(cache.Orders[id])
-	_, err = db.Exec(sqlStatement, id, order, order.FileName)
+	// fmt.Print(report.FileName)
+	// fmt.Print("\n")
+	_, err = db.Exec(sqlStatement, id, report.FileName, report.Body, report.Name)
+	// _, err = db.Exec(sqlStatement, 4, `{"id":4}`, "filename.txt")
 	if err != nil {
-		return err
+
+		return fmt.Errorf("saveInDB ERROR: %w", err)
 	}
 	return nil
 
@@ -197,16 +212,24 @@ func load_from_db() {
 	defer rows.Close()
 
 	for rows.Next() {
-		var id string
-		var data string
+		var report_id int
+		var report_text string
+		var file_name string
+		var reporter_name string
 
-		if err := rows.Scan(&id, &data); err != nil {
+		if err := rows.Scan(&report_id, &file_name, &report_text, &reporter_name); err != nil {
 			log.Fatal(err)
 		}
 
 		// fmt.Print(reflect.TypeOf(data))
 		// fmt.Print(data)
 		// cache.from_db(id, data)
+		cache.Reports[report_id] = Report{
+			Id:       report_id,
+			Name:     reporter_name,
+			Body:     report_text,
+			FileName: file_name,
+		}
 
 		// cache[id] = data
 	}

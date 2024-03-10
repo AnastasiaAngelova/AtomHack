@@ -14,6 +14,7 @@ func showOrder(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
+	fmt.Print(cache)
 	if _, ok := cache.Reports[id]; ok {
 		fmt.Fprint(w, cache.to_json(id))
 
@@ -74,8 +75,8 @@ func runHttpServer(done chan bool) {
 	mux.HandleFunc("/report", showOrder)
 	signalChan := make(chan os.Signal, 1)
 	go func() {
-		log.Println("Server run on: http:localhost:4000")
-		err := http.ListenAndServe(":4000", mux)
+		log.Println("Server run on: http:localhost:4001")
+		err := http.ListenAndServe(":4001", mux)
 		log.Fatal(err)
 		for range signalChan {
 			fmt.Printf("\nReceived an interrupt, unsubscribing and closing connection...\n\n")
