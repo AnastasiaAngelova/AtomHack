@@ -26,9 +26,6 @@ class ReportPage extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () {
-              // Navigate to the settings page. If the user leaves and returns
-              // to the app after it has been killed while running in the
-              // background, the navigation stack is restored.
               Navigator.restorablePushNamed(context, SettingsView.routeName);
             },
           ),
@@ -137,7 +134,7 @@ class SentMailList extends StatelessWidget {
     'Письмо 5',
   ];
 
- SentMailList({super.key});
+  SentMailList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -215,12 +212,45 @@ class SentMailList extends StatelessWidget {
           return ListTile(
             title: Text(sentMails[index]),
             onTap: () {
-              // Действие при нажатии на элемент списка (по желанию)
-              // Например, можно открыть детали письма или выполнить другое действие
-              print('Выбрано письмо: ${sentMails[index]}');
+              Navigator.of(context).push(_buildPageRoute(sentMails[index]));
             },
           );
         },
+      ),
+    );
+  }
+
+  PageRouteBuilder _buildPageRoute(String emailContent) {
+    return PageRouteBuilder(
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return _EmailContentDialog(emailContent: emailContent);
+      },
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        const begin = Offset(1.0, 0.0);
+        const end = Offset.zero;
+        const curve = Curves.easeInOut;
+        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var offsetAnimation = animation.drive(tween);
+        return SlideTransition(position: offsetAnimation, child: child);
+      },
+    );
+  }
+}
+
+class _EmailContentDialog extends StatelessWidget {
+  final String emailContent;
+
+  const _EmailContentDialog({Key? key, required this.emailContent}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Email Content'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Text(emailContent),
       ),
     );
   }
