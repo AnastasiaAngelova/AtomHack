@@ -91,11 +91,11 @@ func (c Cache) from_json(json_str string) error {
 
 	c.Reports[report.Id] = report
 
-	// log.Print(cache.Orders[len(cache.Orders)-1])
-	// err1 := saveInDB(report.Id)
-	// if err1 != nil {
-	// 	return err1
-	// }
+	log.Print(cache.Orders[len(cache.Orders)-1])
+	err1 := saveInDB(report.Id)
+	if err1 != nil {
+		return err1
+	}
 	return nil
 
 }
