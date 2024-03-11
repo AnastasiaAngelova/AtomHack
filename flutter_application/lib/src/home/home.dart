@@ -398,22 +398,19 @@ class _EmailContentDialog extends StatelessWidget {
 class PendingMailList extends StatelessWidget {
   final dio = Dio();
   Future<Map<String, dynamic>> getPendingMail() async {
-    final String url = 'http://127.0.0.1:5000/waiting'; // Замените на ваш URL
+    final String url = 'http://127.0.0.1:5000/waiting';
 
     try {
       final Response response = await dio.get(url);
 
       if (response.statusCode == 200) {
-        // Если запрос успешен, преобразуйте ответ в словарь
         Map<String, dynamic> data = response.data;
         return data;
       } else {
-        // Если запрос завершился неудачно, выведите сообщение об ошибке
         print('Failed to load data. Status code: ${response.statusCode}');
         return {};
       }
     } catch (error) {
-      // Если произошла ошибка во время выполнения запроса, выведите ее
       print('Error fetching data: $error');
       return {};
     }
