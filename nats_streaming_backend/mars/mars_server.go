@@ -277,11 +277,12 @@ func runMarsServer() {
 			curPeriodInd = i
 		}
 	}
-	log.Print("before before sleep")
+	log.Print(periods)
 	if curPeriodInd == -1 {
-		for _, period := range periods {
+		for i, period := range periods {
 			if timeNow.Before(period.From) {
 				time.Sleep(time.Until(period.From))
+				curPeriodInd = i
 				break
 			}
 		}
