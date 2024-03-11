@@ -53,10 +53,15 @@ def get_reports():
         res = cur.fetchall()
 
         cur.close()
+        result_list = [
+            {'id': row[0], 'text': row[1], 'name': row[2], 'file': row[3], 'status': row[4]}
+            for row in res
+        ]
+
     except:
         print('Can`t select from database')
 
-    return jsonify({'result': res})
+    return jsonify({'result': result_list})
 
 
 @app.route('/report', methods=['GET'])
@@ -70,10 +75,15 @@ def get_report_by_id():
         print(id)
         print(res)
         cur.close()
+        result_list = [
+            {'id': row[0], 'text': row[1], 'name': row[2], 'file': row[3], 'status': row[4]}
+            for row in res
+        ]
+
     except:
         print('Can`t select from database')
 
-    return jsonify({'result': res})
+    return jsonify({'result': result_list})
 
 
 @app.route('/drafts', methods=['GET'])
@@ -83,9 +93,14 @@ def get_drafts():
         cur.execute("select * from public.report where status=0;")
         res = cur.fetchall()
         cur.close()
+        result_list = [
+            {'id': row[0], 'text': row[1], 'name': row[2], 'file': row[3], 'status': row[4]}
+            for row in res
+        ]
+
     except:
         print('Can`t select from database')
-    return jsonify({'result': res})
+    return jsonify({'result': result_list})
 
 
 @app.route('/sent', methods=['GET'])
@@ -114,9 +129,14 @@ def get_waiting():
         cur.execute("select * from public.report where status=1;")
         res = cur.fetchall()
         cur.close()
+        result_list = [
+            {'id': row[0], 'text': row[1], 'name': row[2], 'file': row[3], 'status': row[4]}
+            for row in res
+        ]
+
     except:
         print('Can`t select from database')
-    return jsonify({'result': res})
+    return jsonify({'result': result_list})
 
 
 if __name__ == '__main__':
