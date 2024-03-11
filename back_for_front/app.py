@@ -24,7 +24,7 @@ def new_report():
         file_name = file.filename
     print(req.files)
     if len(file_name) != 0:
-        file_name += '_' + str(hash(req.form['text']))
+        file_name = str(hash(req.form['text']))[1:] + '_' + file_name
         if file:
             with open(file_name, 'wb') as f:
                 f.write(file.read())

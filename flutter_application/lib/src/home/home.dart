@@ -1,7 +1,10 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:open_file/open_file.dart';
 
 import '../settings/settings_view.dart';
 import 'package:dio/dio.dart';
@@ -20,19 +23,25 @@ class ReportPage extends StatelessWidget {
     final response = await dio.get('http://127.0.0.1:4000/order?id=id_1');
     print(response);
   }
-  void createReport(String name, String text, String? file) async {
+
+  void createReport(
+      String name, String text, String? path, String filename) async {
     String url = 'http://127.0.0.1:5000/report';
     try {
       FormData formData;
-      if (file != null && file != ''){
-         formData = FormData.fromMap({
+      String? file = path;
+      print(file);
+
+      if (file != null && file != '') {
+        formData = FormData.fromMap({
           'name': name,
           'text': text,
-          'files': {file: await MultipartFile.fromFile(file, filename: 'file')},
+          'files': {
+            file: await MultipartFile.fromFile(file, filename: filename)
+          },
         });
-      }
-      else{
-         formData = FormData.fromMap({
+      } else {
+        formData = FormData.fromMap({
           'name': name,
           'text': text,
         });
@@ -53,12 +62,12 @@ class ReportPage extends StatelessWidget {
       print('Error sending request: $error');
     }
   }
-  
+
   bool fileFlag = false;
   FilePickerResult? result;
 
   @override
-  Widget build(BuildContext context) {  
+  Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
@@ -83,17 +92,17 @@ class ReportPage extends StatelessWidget {
             Column(
               children: [
                 TextField(
-                  controller: nameController,
-                  decoration: InputDecoration(
-                  labelText: 'Input name...',
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color(0xFFE5E7EB),
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                )),
+                    controller: nameController,
+                    decoration: InputDecoration(
+                      labelText: 'Input name...',
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: const BorderSide(
+                          color: Color(0xFFE5E7EB),
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(0),
+                      ),
+                    )),
                 TextField(
                   controller: reportController,
                   autofocus: true,
@@ -141,33 +150,52 @@ class ReportPage extends StatelessWidget {
               padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
             ),
             Row(children: [
-              IconButton(
-                onPressed: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles();
-                  if (result != null) {
-                    fileFlag = true;
-                    print(result.files.first.name);
-                  }
-                },
-                icon: const Icon(Icons.upload_file),
-              ),
-              IconButton(
-                onPressed: () {
-                  print("post");
-                  if (fileFlag == true){
-                    print("With file");
-                    String? filePath = result?.files.first.path;
-                    createReport(nameController.text, reportController.text, filePath);
-                  }
-                  else{
-                    print("Without file");
-                    createReport(nameController.text, reportController.text, '');
-                  }
-                  //getHttp();
-                },
-                icon: const Icon(Icons.outbond_outlined),
-              )
+              // IconButton(
+              //   onPressed: () async {
+              //     FilePickerResult? result =
+              //         await FilePicker.platform.pickFiles();
+              //     if (result != null) {
+              //       fileFlag = true;
+              //       print(result.files.first.name);
+              //     }
+              //   },
+              //   icon: const Icon(Icons.upload_file),
+              // ),
+              TextButton.icon(
+                  icon: Icon(Icons.upload_file),
+                  label: Text('UPLOAD FILE'),
+                  onPressed: () async {
+                    var picked = await FilePicker.platform.pickFiles();
+
+                    print(picked?.files.last.path);
+
+                    if (picked?.files.last.path != null) {
+                      createReport(nameController.text, reportController.text,
+                          picked?.files.last.path, picked!.files.last.name);
+                    } else {
+                      createReport(
+                          nameController.text, reportController.text, '', '');
+                    }
+                  })
+              // IconButton(
+              //   onPressed: () {
+              //     print("post");
+              //     if (fileFlag == true) {
+              //       print("With file");
+              //       String? filePath = result?.files.first.path;
+              //       print("!!!!!!!!!!!!!!");
+              //       print(filePath);
+              //       createReport(
+              //           nameController.text, reportController.text, filePath);
+              //     } else {
+              //       print("Without file");
+              //       createReport(
+              //           nameController.text, reportController.text, '');
+              //     }
+              //     //getHttp();
+              //   },
+              //   icon: const Icon(Icons.outbond_outlined),
+              // )
             ]),
           ]),
         ),
@@ -280,7 +308,8 @@ class SentMailList extends StatelessWidget {
         const begin = Offset(1.0, 0.0);
         const end = Offset.zero;
         const curve = Curves.easeInOut;
-        var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        var tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         var offsetAnimation = animation.drive(tween);
         return SlideTransition(position: offsetAnimation, child: child);
       },
@@ -291,7 +320,8 @@ class SentMailList extends StatelessWidget {
 class _EmailContentDialog extends StatelessWidget {
   final String emailContent;
 
-  const _EmailContentDialog({Key? key, required this.emailContent}) : super(key: key);
+  const _EmailContentDialog({Key? key, required this.emailContent})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -316,7 +346,7 @@ class PendingMailList extends StatelessWidget {
     'Письмо E',
   ];
 
-PendingMailList({super.key});
+  PendingMailList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -340,3 +370,44 @@ PendingMailList({super.key});
     );
   }
 }
+
+// class FileUploadButton extends StatelessWidget {
+//     final dio = Dio();
+//    void createReport(String name, String text, String? file) async {
+//     String url = 'http://127.0.0.1:5000/report';
+//     try {
+//       FormData formData;
+//       print(file);
+//       if (file != null && file != '') {
+//         formData = FormData.fromMap({
+//           'name': name,
+//           'text': text,
+//           'files': {file: await MultipartFile.fromFile(file, filename: 'file')},
+//         });
+//       } else {
+//         formData = FormData.fromMap({
+//           'name': name,
+//           'text': text,
+//         });
+//       }
+
+//       Response response = await dio.post(
+//         url,
+//         data: formData,
+//       );
+
+//       if (response.statusCode == 200) {
+//         print('Request sent successfully');
+//         print(response.data);
+//       } else {
+//         print('Failed to send request. Status code: ${response.statusCode}');
+//       }
+//     } catch (error) {
+//       print('Error sending request: $error');
+//     }
+//   }
+//   @override
+//   Widget build(BuildContext context) {
+//     return 
+//   }
+// }
